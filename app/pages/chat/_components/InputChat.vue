@@ -24,11 +24,21 @@ const emit = defineEmits<{
   (e: 'scrollToBottom'): void
 }>()
 
+const isMobile = () => {
+  return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(
+    navigator.userAgent,
+  )
+}
+
 /**
  *
  * @param event
  */
 const handleEnter = (event: KeyboardEvent) => {
+  if (isMobile()) {
+    // Let the default behavior happen (e.g., insert a line break)
+    return
+  }
   if (
     event.key === 'Enter' &&
     !event.shiftKey &&
