@@ -108,25 +108,15 @@ export async function generateVideos({
 
   if (llm_model !== 'veo-2.0-generate-001') throw new Error('No válido')
 
-  async function imageUrlToBytes(url: string): Promise<Uint8Array> {
-    const response = await fetch(url)
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch image: ${response.status} ${response.statusText}`,
-      )
-    }
-
-    const arrayBuffer = await response.arrayBuffer()
-    return new Uint8Array(arrayBuffer)
-  }
-
+  const fixImage = imagenUri.replaceAll(
+    'https://storage.googleapis.com/',
+    'gs://',
+  )
   let operation = await ai.models.generateVideos({
     model: llm_model,
     prompt: prompt,
     image: {
-      gcsUri:
-        'gs://linebox-bucket/818546635018f03953ef-8288-4db6-a5d0-a36eab998a2b.jpeg',
+      gcsUri: fixImage,
       mimeType: 'image/jpeg',
     },
     config: {

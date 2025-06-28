@@ -318,14 +318,9 @@ export const chatTrpc = {
 
           console.log({ videoRes })
 
-          const llmImageResponse = `
-          
-          <video controls width="500">
+          const llmImageResponse = ` <video controls width="300">
             <source src="${videoRes}" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-          `
-          //const llmImageResponse = `![Alt Text](${videoRes})`
+            Your browser does not support the video tag.</video>`
 
           fullResponse += llmImageResponse
           yield llmImageResponse
