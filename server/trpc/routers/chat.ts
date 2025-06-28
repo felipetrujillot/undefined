@@ -304,8 +304,59 @@ export const chatTrpc = {
             if (r.tipo === 'texto') return r
           })
 
+          let uriImagen = ''
           const findImagen = input_chat.find((r) => {
             if (r.tipo === 'imagen') return r
+          })
+
+          if (findImagen) {
+            uriImagen = findImagen.chat
+          } else {
+            const reverseChat = findChat.sort((a, b) => b.id_chat - a.id_chat)
+
+            const findImagenChatUser = reverseChat.find((r) => {
+              if (r.tipo === 'imagen') return r
+            })
+
+            if (findImagenChatUser) {
+              if (findImagenChatUser.origen === 'user') {
+                uriImagen = findImagenChatUser.chat
+              }
+            }
+
+            for (let i = 0; i < reverseChat.length; i++) {
+              const element = reverseChat[i]
+
+              function extractMediaUrl(text: string) {
+                // Try Markdown image ![Alt](URL)
+                const markdownRegex = /!\[.*?\]\((.*?)\)/
+                const markdownMatch = text.match(markdownRegex)
+                if (markdownMatch) {
+                  return markdownMatch[1]
+                }
+
+                // Try HTML video source src="URL"
+                /*  const htmlVideoRegex = /<source[^>]*src=["']([^"']+)["']/
+                const htmlMatch = text.match(htmlVideoRegex)
+                if (htmlMatch) {
+                  return htmlMatch[1]
+                }
+ */
+                return null // No match found
+              }
+
+              const extractedUri = extractMediaUrl(element.chat)
+
+              if (extractedUri) {
+                uriImagen = extractedUri
+                break
+              }
+            }
+          }
+
+          console.log({
+            prompt: findPrompt!.chat,
+            imagenUri: uriImagen,
           })
 
           const videoRes = await generateVideos({
@@ -313,7 +364,7 @@ export const chatTrpc = {
             system_prompt: '',
             llm_model: llm_model,
             prompt: findPrompt!.chat,
-            imagenUri: findImagen!.chat,
+            imagenUri: uriImagen,
           })
 
           console.log({ videoRes })
