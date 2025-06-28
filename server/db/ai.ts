@@ -87,6 +87,82 @@ export async function generateContent({
   return streamingResp
 }
 
+export async function generateVideos({
+  system_prompt,
+  prompt,
+  location,
+  llm_model,
+  imagenUri,
+}: {
+  location: string
+  prompt: string
+  system_prompt: string
+  llm_model: string
+  imagenUri: string
+  /*  contents: {
+    role: string
+    parts: Part[]
+  }[] */
+}) {
+  const ai = startAi(location)
+
+  if (llm_model !== 'veo-2.0-generate-001') throw new Error('No válido')
+
+  async function imageUrlToBytes(url: string): Promise<Uint8Array> {
+    const response = await fetch(url)
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch image: ${response.status} ${response.statusText}`,
+      )
+    }
+
+    const arrayBuffer = await response.arrayBuffer()
+    return new Uint8Array(arrayBuffer)
+  }
+
+  let operation = await ai.models.generateVideos({
+    model: llm_model,
+    prompt: prompt,
+    image: {
+      gcsUri:
+        'gs://linebox-bucket/818546635018f03953ef-8288-4db6-a5d0-a36eab998a2b.jpeg',
+      mimeType: 'image/jpeg',
+    },
+    config: {
+      numberOfVideos: 1,
+      aspectRatio: '9:16',
+    },
+
+    // contents: contents,
+  })
+
+  while (!operation.done) {
+    await new Promise((resolve) => setTimeout(resolve, 10000))
+    operation = await ai.operations.getVideosOperation({ operation: operation })
+  }
+
+  const bytesVideo = operation!.response!.generatedVideos![0]!.video!.videoBytes
+
+  const bufferFile = Buffer.from(bytesVideo, 'base64')
+
+  const id = newUuid()
+
+  const filename = `${id}.mp4`
+
+  await gcpBucket
+    .file(filename)
+    .save(bufferFile, {
+      contentType: 'video/mp4',
+    })
+    .catch((err) => {
+      throw new Error('Hubo un problema al intentar subir el documento')
+    })
+
+  const rr = `https://storage.googleapis.com/linebox-bucket/${filename}`
+
+  return rr
+}
 /**
  *
  * @param param0

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { LucideSquarePen } from 'lucide-vue-next'
+import { useMagicKeys } from '@vueuse/core'
 
 const { $trpc } = useNuxtApp()
-import { useMagicKeys } from '@vueuse/core'
 
 const route = useRoute()
 const notas = useNotes()

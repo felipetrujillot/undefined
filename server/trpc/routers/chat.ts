@@ -15,7 +15,7 @@ import { v4 as uuid } from 'uuid'
 import { RouterOutput } from '.'
 import { Part } from '@google/genai'
 import { octetInputParser } from '@trpc/server/http'
-import { generateContent, generateImage } from '~~/server/db/ai'
+import { generateContent, generateImage, generateVideos } from '~~/server/db/ai'
 
 export const chatTrpc = {
   /**
@@ -299,7 +299,37 @@ export const chatTrpc = {
       async function* streamGenerateContent(onSuccess: Function) {
         let fullResponse = ''
 
-        if (llm_model === 'gemini-2.0-flash-exp') {
+        if (llm_model === 'veo-2.0-generate-001') {
+          const findPrompt = input_chat.find((r) => {
+            if (r.tipo === 'texto') return r
+          })
+
+          const findImagen = input_chat.find((r) => {
+            if (r.tipo === 'imagen') return r
+          })
+
+          const videoRes = await generateVideos({
+            location,
+            system_prompt: '',
+            llm_model: llm_model,
+            prompt: findPrompt!.chat,
+            imagenUri: findImagen!.chat,
+          })
+
+          console.log({ videoRes })
+
+          const llmImageResponse = `
+          
+          <video controls width="500">
+            <source src="${videoRes}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          `
+          //const llmImageResponse = `![Alt Text](${videoRes})`
+
+          fullResponse += llmImageResponse
+          yield llmImageResponse
+        } else if (llm_model === 'gemini-2.0-flash-exp') {
           const imageRes = await generateImage({
             location,
             system_prompt:

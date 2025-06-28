@@ -134,6 +134,7 @@ export const DEFAULT_CHAT: ChatAI[] = [
     chat: `
 ## undefined
 
+
 - Para generar imágenes debes cambiar a un modelo que soporte imágenes presionando el botón ... en la parte de abajo
 - System prompt sirve para usar agentes específicos.
 - Puedes adjuntar .pdfs o imágenes para usar en el contexto presionando el ícono de abajo.
