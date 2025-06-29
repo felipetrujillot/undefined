@@ -130,6 +130,8 @@ export async function generateVideos({
   while (!operation.done) {
     await new Promise((resolve) => setTimeout(resolve, 10000))
     operation = await ai.operations.getVideosOperation({ operation: operation })
+
+    console.log(operation)
   }
 
   const bytesVideo = operation!.response!.generatedVideos![0]!.video!.videoBytes
