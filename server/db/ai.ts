@@ -7,10 +7,10 @@ import { newUuid } from '~/composables/helper'
 const startAi = (location: string) => {
   return new GoogleGenAI({
     vertexai: true,
-    project: 'linebox-412716',
+    project: 'utopian-hearth-464405-s1',
     location: location,
     googleAuthOptions: {
-      keyFilename: 'server/db/linebox-412716-99194e13da0c.json',
+      keyFilename: 'server/db/utopian-hearth-464405-s1-31f6728794b5.json',
     },
   })
 }
