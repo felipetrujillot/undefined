@@ -37,6 +37,6 @@ export default defineEventHandler(async (event) => {
       throw new Error('Hubo un problema al intentar subir el documento')
     })
 
-  const rr = `https://storage.googleapis.com/linebox-bucket/${filename}`
+  const rr = `https://storage.googleapis.com/undefined-cdn/${filename}`
   return rr
 })
