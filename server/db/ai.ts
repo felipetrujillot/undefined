@@ -34,7 +34,6 @@ export async function generateContent({
     parts: Part[]
   }[]
 }) {
-  console.log({ llm_model, location, contents })
   const ai = startAi(location)
 
   const streamingResp = await ai.models.generateContentStream({
@@ -151,7 +150,7 @@ export async function generateVideos({
       throw new Error('Hubo un problema al intentar subir el documento')
     })
 
-  const rr = `https://storage.googleapis.com/linebox-bucket/${filename}`
+  const rr = `https://storage.googleapis.com/linebox-cdn/${filename}`
 
   return rr
 }
@@ -226,7 +225,7 @@ export async function generateImage({
       throw new Error('Hubo un problema al intentar subir el documento')
     })
 
-  const rr = `https://storage.googleapis.com/linebox-bucket/${filename}`
+  const rr = `https://storage.googleapis.com/linebox-cdn/${filename}`
 
   return rr
 }
